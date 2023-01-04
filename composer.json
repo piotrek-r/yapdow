@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Yapdow\\": "src"
+      "Yapdow\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Yapdow\\Tests\\": "tests"
+      "Yapdow\\Tests\\": "tests/"
     }
   }
 }
