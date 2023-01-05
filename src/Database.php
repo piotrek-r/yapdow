@@ -16,8 +16,9 @@ final readonly class Database
         string $dsn,
         string $username = null,
         string $password = null,
-        array $pdoOptions = null,
-    ): Database {
+        array  $pdoOptions = null,
+    ): Database
+    {
         $pdo = new PDO($dsn, $username, $password, $pdoOptions);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         return new Database($pdo);
@@ -71,8 +72,10 @@ final readonly class Database
     public function executeRawSQL(string $sql, array $parameters = []): PDOStatement
     {
         try {
+            $this->pdo->beginTransaction();
             $stmt = $this->prepare($sql, $parameters);
             $stmt->execute();
+            $this->pdo->commit();
         } catch (PDOException $e) {
             $this->pdo->rollBack();
             throw new Exception\DatabaseExecuteException($e->getMessage(), 0, $e);
