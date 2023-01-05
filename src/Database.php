@@ -23,7 +23,6 @@ final readonly class Database
         return new Database($pdo);
     }
 
-
     public function __construct(private PDO $pdo)
     {
     }
@@ -40,7 +39,7 @@ final readonly class Database
             $this->pdo->commit();
         } catch (PDOException $e) {
             $this->pdo->rollBack();
-            throw new Exception\DatabaseExecuteException($e->getMessage(), $e->getCode(), $e);
+            throw new Exception\DatabaseExecuteException($e->getMessage(), 0, $e);
         }
 
         $statementType = get_debug_type($statement);
@@ -58,7 +57,7 @@ final readonly class Database
             $stmt = $this->prepare($statement->__toString(), $statement->getParameters());
             $stmt->execute();
         } catch (PDOException $e) {
-            throw new Exception\DatabaseFetchException($e->getMessage(), $e->getCode(), $e);
+            throw new Exception\DatabaseFetchException($e->getMessage(), 0, $e);
         }
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -76,7 +75,7 @@ final readonly class Database
             $stmt->execute();
         } catch (PDOException $e) {
             $this->pdo->rollBack();
-            throw new Exception\DatabaseExecuteException($e->getMessage(), $e->getCode(), $e);
+            throw new Exception\DatabaseExecuteException($e->getMessage(), 0, $e);
         }
 
         return $stmt;
