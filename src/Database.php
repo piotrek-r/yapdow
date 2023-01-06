@@ -39,7 +39,9 @@ final readonly class Database
             $lastInsertId = $this->pdo->lastInsertId() ?: null;
             $this->pdo->commit();
         } catch (PDOException $e) {
-            $this->pdo->rollBack();
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
             throw new Exception\DatabaseExecuteException($e->getMessage(), 0, $e);
         }
 
@@ -77,7 +79,9 @@ final readonly class Database
             $stmt->execute();
             $this->pdo->commit();
         } catch (PDOException $e) {
-            $this->pdo->rollBack();
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
             throw new Exception\DatabaseExecuteException($e->getMessage(), 0, $e);
         }
 
