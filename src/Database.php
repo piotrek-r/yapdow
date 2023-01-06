@@ -32,16 +32,10 @@ final readonly class Database
     {
         $stmt = $this->prepare($statement->__toString(), $statement->getParameters());
 
-        $this->pdo->beginTransaction();
-
         try {
             $stmt->execute();
             $lastInsertId = $this->pdo->lastInsertId() ?: null;
-            $this->pdo->commit();
         } catch (PDOException $e) {
-            if ($this->pdo->inTransaction()) {
-                $this->pdo->rollBack();
-            }
             throw new Exception\DatabaseExecuteException($e->getMessage(), 0, $e);
         }
 
@@ -74,14 +68,9 @@ final readonly class Database
     public function executeRawSQL(string $sql, array $parameters = []): PDOStatement
     {
         try {
-            $this->pdo->beginTransaction();
             $stmt = $this->prepare($sql, $parameters);
             $stmt->execute();
-            $this->pdo->commit();
         } catch (PDOException $e) {
-            if ($this->pdo->inTransaction()) {
-                $this->pdo->rollBack();
-            }
             throw new Exception\DatabaseExecuteException($e->getMessage(), 0, $e);
         }
 
