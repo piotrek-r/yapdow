@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yapdow;
 
 use Yapdow\Stmt\ChangeStatement;
+use Yapdow\Stmt\Parameter;
 use Yapdow\Stmt\SelectStmt;
 use PDO;
 use PDOException;
@@ -16,9 +17,8 @@ final readonly class Database
         string $dsn,
         string $username = null,
         string $password = null,
-        array  $pdoOptions = null,
-    ): Database
-    {
+        array $pdoOptions = null,
+    ): Database {
         $pdo = new PDO($dsn, $username, $password, $pdoOptions);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         return new Database($pdo);
@@ -77,12 +77,18 @@ final readonly class Database
         return $stmt;
     }
 
+    /**
+     * @param list<Parameter> $parameters
+     */
     private function prepare(string $sql, array $parameters): PDOStatement
     {
         $stmt = $this->pdo->prepare($sql);
 
-        foreach ($parameters as $paramName => &$paramValue) {
-            $stmt->bindParam($paramName, $paramValue);
+        foreach ($parameters as $parameter) {
+            $name = $parameter->getName();
+            $value = $parameter->getValue();
+            $type = $parameter->getType();
+            $stmt->bindValue($name, $value, $type);
         }
 
         return $stmt;

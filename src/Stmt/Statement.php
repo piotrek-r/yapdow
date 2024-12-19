@@ -8,7 +8,7 @@ use Stringable;
 
 interface Statement extends Stringable
 {
-    public function createParameter(mixed $value): string;
+    public function createParameter(mixed $value, int $type = null): string;
 
     public function getParameters(): array;
 }
